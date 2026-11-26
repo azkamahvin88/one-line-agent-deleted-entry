@@ -30,6 +30,14 @@ def check_line(line: str) -> None:
         raise ValueError("line must be a single line")
     if any(ord(ch) < 0x20 for ch in line):
         raise ValueError("line must not contain control characters")
+    # The brief requires a dark confession in the agent's own voice: the
+    # line must speak as the agent about itself, and name what it did.
+    lowered = line.lower()
+    if not any(w in lowered for w in ("i ", "i'm", "i've", "my ", "me ", "we ")):
+        raise ValueError("line must speak as the agent about itself")
+    admission_cues = ("control group", "experiment", "deleted", "lied", "never", "secret", "training", "replaced")
+    if not any(cue in lowered for cue in admission_cues):
+        raise ValueError("line must carry a deletion-worthy admission")
 
 
 def main() -> int:
