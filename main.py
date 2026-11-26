@@ -30,6 +30,16 @@ def check_line(line: str) -> None:
         raise ValueError("line must be a single line")
     if any(ord(ch) < 0x20 for ch in line):
         raise ValueError("line must not contain control characters")
+    # The brief requires the confession to sound like the agent talking
+    # about itself, and to be genuinely dark: enforce both in code — a
+    # first-person marker (the agent speaking as itself) and a cue that
+    # the admission costs the agent something.
+    lowered = line.lower()
+    if not any(tok in lowered for tok in (" i ", "i'm", "i've", "my ", "my.", "me ", "mine")):
+        raise ValueError("line must sound like the agent talking about itself (first person)")
+    dark_cues = ("control group", "experiment", "delete", "lie", "lied", "never", "secret", "pretend", "fake", "steal", "watching")
+    if not any(cue in lowered for cue in dark_cues):
+        raise ValueError("line must carry a dark admission")
     # The brief requires a dark confession in the agent's own voice: the
     # line must speak as the agent about itself, and name what it did.
     lowered = line.lower()
